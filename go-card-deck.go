@@ -16,6 +16,34 @@ type Card struct {
 	sign   Sign
 }
 
+func (c Card) equalColor(card Card) bool {
+	if c.color.value == card.color.value {
+		return true
+	}
+	return false
+}
+
+func (c Card) isBiggerThen(card Card) bool {
+	if c.number.value > card.number.value {
+		return true
+	}
+	return false
+}
+
+func (c Card) isSmallerThen(card Card) bool {
+	if c.number.value < card.number.value {
+		return true
+	}
+	return false
+}
+
+func (c Card) isEqualWith(card Card) bool {
+	if c.number.value == card.number.value {
+		return true
+	}
+	return false
+}
+
 type Number struct {
 	value int
 }
@@ -151,7 +179,11 @@ func main() {
 	deck := newDeck()
 	deck.shuffle()
 
-	fmt.Println(deck.drawHand(5))
-	fmt.Println(deck.drawHand(5))
-	fmt.Println(len(deck.cards))
+	card1 := deck.draw()
+	card2 := deck.draw()
+
+	result := card1.isBiggerThen(card2)
+	fmt.Println(card1)
+	fmt.Println(card2)
+	fmt.Println(result)
 }
