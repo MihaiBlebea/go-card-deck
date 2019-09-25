@@ -23,6 +23,13 @@ func (c Card) equalColor(card Card) bool {
 	return false
 }
 
+func (c Card) equalSign(card Card) bool {
+	if c.sign.value == card.sign.value {
+		return true
+	}
+	return false
+}
+
 func (c Card) isBiggerThen(card Card) bool {
 	if c.number.value > card.number.value {
 		return true
