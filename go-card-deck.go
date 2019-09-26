@@ -7,60 +7,111 @@ import (
 	"time"
 )
 
-var colors = [2]string{"red", "black"}
-var signs = [4]string{"hearts", "spades", "diamonds", "clubs"}
+type Suit int
 
+// All the suit types with a value of integer starting from 1
+const (
+	_ Suit = iota
+	Heart
+	Spade
+	Club
+	Diamond
+)
+
+type Rank int
+
+// All the rank types with a value of integer starting from 1
+const (
+	_ Rank = iota
+	Ace
+	Two
+	Three
+	Four
+	Five
+	Six
+	Seven
+	Eight
+	Nine
+	Ten
+	Jack
+	Queen
+	King
+)
+
+// Card model is the main actor of our package
 type Card struct {
-	number Number
-	color  Color
-	sign   Sign
+	rank Rank
+	suit Suit
+}
+
+func (c Card) getSuit() (string, string) {
+	var color string
+	var suit string
+	switch c.suit {
+	case Heart:
+		color = "red"
+		suit = "heart"
+	case Diamond:
+		color = "black"
+		suit = "diamond"
+	case Club:
+		color = "black"
+		suit = "club"
+	case Spade:
+		color = "red"
+		suit = "spade"
+	}
+	return suit, color
+}
+
+func (c Card) getValue() int {
+	return int(c.rank)
+}
+
+func (c *Card) setValue(value int) {
+	c.rank = Rank(value)
 }
 
 func (c Card) equalColor(card Card) bool {
-	if c.color.value == card.color.value {
+	suit1, _ := c.getSuit()
+	suit2, _ := card.getSuit()
+	if suit1 == suit2 {
 		return true
 	}
 	return false
 }
 
-func (c Card) equalSign(card Card) bool {
-	if c.sign.value == card.sign.value {
+func (c Card) equalSuit(card Card) bool {
+	if c.suit == card.suit {
+		return true
+	}
+	return false
+}
+
+func (c Card) equalRank(card Card) bool {
+	if c.rank == card.rank {
 		return true
 	}
 	return false
 }
 
 func (c Card) isBiggerThen(card Card) bool {
-	if c.number.value > card.number.value {
+	if c.rank > card.rank {
 		return true
 	}
 	return false
 }
 
 func (c Card) isSmallerThen(card Card) bool {
-	if c.number.value < card.number.value {
+	if c.rank < card.rank {
 		return true
 	}
 	return false
 }
 
-func (c Card) isEqualWith(card Card) bool {
-	if c.number.value == card.number.value {
-		return true
-	}
-	return false
-}
-
-type Number struct {
-	value int
-}
-
-type Color struct {
-	value string
-}
-
-type Sign struct {
-	value string
+func (c Card) show() (string, string, int) {
+	suit, color := c.getSuit()
+	return suit, color, c.getValue()
 }
 
 type Deck struct {
@@ -80,11 +131,10 @@ func (d Deck) pick() Card {
 
 func (d *Deck) draw() Card {
 	index := d.pickIndex()
-	cards := d.cards
-	cards[len(cards)-1], cards[index] = cards[index], cards[len(cards)-1]
-	d.cards = cards[:len(cards)-1]
+	card := d.cards[index]
+	d.remove(card)
 
-	return cards[len(cards)-1]
+	return card
 }
 
 func (d *Deck) drawHand(count int) []Card {
@@ -107,77 +157,39 @@ func (d Deck) shuffle() Deck {
 	return d
 }
 
-func newNumber(value int) Number {
-	valid := false
-	for i := 1; i <= 14; i++ {
-		if value == i {
-			valid = true
+func (d *Deck) remove(card Card) *Deck {
+	var index int
+	for i := 0; i < len(d.cards); i++ {
+		if d.cards[i].equalSuit(card) && d.cards[i].equalRank(card) {
+			index = i
 		}
 	}
 
-	if valid != true {
-		log.Print("Number value is not valid")
-	}
-	return Number{value}
+	cards := d.cards
+
+	cards[len(cards)-1], cards[index] = cards[index], cards[len(cards)-1]
+	d.cards = cards[:len(cards)-1]
+
+	return d
 }
 
-func newColor(value string) Color {
-	valid := false
-	for i := 0; i < len(colors); i++ {
-		if colors[i] == value {
-			valid = true
-		}
-	}
-	if valid != true {
-		log.Panic("Color is not valid")
-	}
-	return Color{value}
-}
-
-func newSign(value string) Sign {
-	valid := false
-	for i := 0; i < 4; i++ {
-		if signs[i] == value {
-			valid = true
-		}
-	}
-
-	if valid != true {
-		log.Panic("Sign is not valid")
-	}
-	return Sign{value}
-}
-
-func newCard(nr int, colr string, sgn string) Card {
-	color := newColor(colr)
-	sign := newSign(sgn)
-	number := newNumber(nr)
-
-	if color.value == "red" {
-		if sign.value != "hearts" && sign.value != "diamonds" {
-			log.Panic("Color and sign are not valid")
-		}
-	}
-
-	if color.value == "black" {
-		if sign.value != "spades" && sign.value != "clubs" {
-			log.Panic("Color and sign are not valid")
-		}
-	}
+func newCard(suit Suit, rank Rank) Card {
 	return Card{
-		number,
-		color,
-		sign,
+		rank,
+		suit,
 	}
 }
 
 func newDeck() Deck {
+	ranks := [13]Rank{Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King}
+	suits := [4]Suit{Heart, Diamond, Club, Spade}
+
 	var cards []Card
-	for i := 1; i <= 14; i++ {
-		cards = append(cards, newCard(i, "red", "hearts"))
-		cards = append(cards, newCard(i, "red", "diamonds"))
-		cards = append(cards, newCard(i, "black", "spades"))
-		cards = append(cards, newCard(i, "black", "clubs"))
+	for i := 0; i < len(ranks); i++ {
+		for k := 0; k < len(suits); k++ {
+			card := Card{ranks[i], suits[k]}
+			cards = append(cards, card)
+		}
 	}
 	return Deck{cards}
 }
@@ -186,11 +198,12 @@ func main() {
 	deck := newDeck()
 	deck.shuffle()
 
-	card1 := deck.draw()
-	card2 := deck.draw()
+	hand1 := deck.drawHand(5)
+	hand2 := deck.drawHand(5)
+	onTable := deck.draw()
 
-	result := card1.isBiggerThen(card2)
-	fmt.Println(card1)
-	fmt.Println(card2)
-	fmt.Println(result)
+	fmt.Println(hand1[0].show())
+	fmt.Println(hand1)
+	fmt.Println(hand2)
+	fmt.Println(onTable)
 }
