@@ -11,40 +11,40 @@ type Deck struct {
 	cards []card.Card
 }
 
-func (d Deck) pickIndex() int {
+func (d Deck) PickIndex() int {
 	length := len(d.cards)
 	seed := rand.NewSource(time.Now().UnixNano())
 	random := rand.New(seed)
 	return random.Intn(length)
 }
 
-func (d Deck) pick() card.Card {
-	return d.cards[d.pickIndex()]
+func (d Deck) Pick() card.Card {
+	return d.cards[d.PickIndex()]
 }
 
-func (d *Deck) draw() card.Card {
-	index := d.pickIndex()
+func (d *Deck) Draw() card.Card {
+	index := d.PickIndex()
 	card := d.cards[index]
 	d.remove(card)
 
 	return card
 }
 
-func (d *Deck) drawHand(count int) []card.Card {
+func (d *Deck) DrawHand(count int) []card.Card {
 	if count < 1 {
 		log.Print("A hand of cards cannot have less then 1 card")
 	}
 	var hand []card.Card
 	for i := 0; i < count; i++ {
-		hand = append(hand, d.draw())
+		hand = append(hand, d.Draw())
 	}
 	return hand
 }
 
-func (d Deck) shuffle() Deck {
-	var shuffled []Card
+func (d Deck) Shuffle() Deck {
+	var shuffled []card.Card
 	for len(d.cards) > 0 {
-		shuffled = append(shuffled, d.draw())
+		shuffled = append(shuffled, d.Draw())
 	}
 	d.cards = shuffled
 	return d
@@ -53,7 +53,7 @@ func (d Deck) shuffle() Deck {
 func (d *Deck) remove(card card.Card) *Deck {
 	var index int
 	for i := 0; i < len(d.cards); i++ {
-		if d.cards[i].equalSuit(card) && d.cards[i].equalRank(card) {
+		if d.cards[i].EqualSuit(card) && d.cards[i].EqualRank(card) {
 			index = i
 		}
 	}
@@ -66,21 +66,14 @@ func (d *Deck) remove(card card.Card) *Deck {
 	return d
 }
 
-func newCard(suit card.Suit, rank card.Rank) card.Card {
-	return card.Card{
-		rank,
-		suit,
-	}
-}
-
-func newDeck() Deck {
-	ranks := [13]Rank{Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King}
-	suits := [4]Suit{Heart, Diamond, Club, Spade}
+func New() Deck {
+	ranks := card.GetRankTypes()
+	suits := card.GetSuitTypes()
 
 	var cards []card.Card
 	for i := 0; i < len(ranks); i++ {
 		for k := 0; k < len(suits); k++ {
-			card := card.Card{ranks[i], suits[k]}
+			card := card.New(suits[k], ranks[i])
 			cards = append(cards, card)
 		}
 	}

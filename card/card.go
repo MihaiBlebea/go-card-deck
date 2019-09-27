@@ -31,13 +31,21 @@ const (
 	King
 )
 
+func GetRankTypes() [13]Rank {
+	return [13]Rank{Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King}
+}
+
+func GetSuitTypes() [4]Suit {
+	return [4]Suit{Heart, Diamond, Club, Spade}
+}
+
 // Card model is the main actor of our package
 type Card struct {
 	rank Rank
 	suit Suit
 }
 
-func (c Card) getSuit() (string, string) {
+func (c Card) GetSuit() (string, string) {
 	var color string
 	var suit string
 	switch c.suit {
@@ -57,52 +65,59 @@ func (c Card) getSuit() (string, string) {
 	return suit, color
 }
 
-func (c Card) getValue() int {
+func (c Card) GetValue() int {
 	return int(c.rank)
 }
 
-func (c *Card) setValue(value int) {
+func (c *Card) SetValue(value int) {
 	c.rank = Rank(value)
 }
 
 func (c Card) equalColor(card Card) bool {
-	suit1, _ := c.getSuit()
-	suit2, _ := card.getSuit()
+	suit1, _ := c.GetSuit()
+	suit2, _ := card.GetSuit()
 	if suit1 == suit2 {
 		return true
 	}
 	return false
 }
 
-func (c Card) equalSuit(card Card) bool {
+func (c Card) EqualSuit(card Card) bool {
 	if c.suit == card.suit {
 		return true
 	}
 	return false
 }
 
-func (c Card) equalRank(card Card) bool {
+func (c Card) EqualRank(card Card) bool {
 	if c.rank == card.rank {
 		return true
 	}
 	return false
 }
 
-func (c Card) isBiggerThen(card Card) bool {
+func (c Card) IsBiggerThen(card Card) bool {
 	if c.rank > card.rank {
 		return true
 	}
 	return false
 }
 
-func (c Card) isSmallerThen(card Card) bool {
+func (c Card) IsSmallerThen(card Card) bool {
 	if c.rank < card.rank {
 		return true
 	}
 	return false
 }
 
-func (c Card) show() (string, string, int) {
-	suit, color := c.getSuit()
-	return suit, color, c.getValue()
+func (c Card) Show() (string, string, int) {
+	suit, color := c.GetSuit()
+	return suit, color, c.GetValue()
+}
+
+func New(suit Suit, rank Rank) Card {
+	return Card{
+		rank,
+		suit,
+	}
 }
