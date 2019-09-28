@@ -2,55 +2,14 @@ package deck
 
 import (
 	"go-card-deck/card"
-	"log"
-	"math/rand"
-	"time"
 )
 
 type Deck struct {
-	cards []card.Card
+	cards []card.CardType
 }
 
-func (d Deck) PickIndex() int {
-	length := len(d.cards)
-	seed := rand.NewSource(time.Now().UnixNano())
-	random := rand.New(seed)
-	return random.Intn(length)
-}
-
-func (d Deck) Pick() card.Card {
-	return d.cards[d.PickIndex()]
-}
-
-func (d *Deck) Draw() card.Card {
-	index := d.PickIndex()
-	card := d.cards[index]
-	d.remove(card)
-
-	return card
-}
-
-func (d *Deck) DrawHand(count int) []card.Card {
-	if count < 1 {
-		log.Print("A hand of cards cannot have less then 1 card")
-	}
-	var hand []card.Card
-	for i := 0; i < count; i++ {
-		hand = append(hand, d.Draw())
-	}
-	return hand
-}
-
-func (d Deck) Shuffle() Deck {
-	var shuffled []card.Card
-	for len(d.cards) > 0 {
-		shuffled = append(shuffled, d.Draw())
-	}
-	d.cards = shuffled
-	return d
-}
-
-func (d *Deck) remove(card card.Card) *Deck {
+// remove removes a card from the deck and returns a pointer to the deck
+func (d *Deck) remove(card card.CardType) *Deck {
 	var index int
 	for i := 0; i < len(d.cards); i++ {
 		if d.cards[i].EqualSuit(card) && d.cards[i].EqualRank(card) {
@@ -59,23 +18,41 @@ func (d *Deck) remove(card card.Card) *Deck {
 	}
 
 	cards := d.cards
-
 	cards[len(cards)-1], cards[index] = cards[index], cards[len(cards)-1]
 	d.cards = cards[:len(cards)-1]
 
 	return d
 }
 
-func New() Deck {
-	ranks := card.GetRankTypes()
-	suits := card.GetSuitTypes()
-
-	var cards []card.Card
-	for i := 0; i < len(ranks); i++ {
-		for k := 0; k < len(suits); k++ {
-			card := card.New(suits[k], ranks[i])
-			cards = append(cards, card)
+// hasCard checks if the deck contains a card. It returns the index of the card and true if card is found, 0 and false if card is not found
+func (d *Deck) hasCard(card card.CardType) (int, bool) {
+	for index, deckCard := range d.cards {
+		if deckCard.EqualRank(card) && deckCard.EqualSuit(card) {
+			return index, true
 		}
 	}
-	return Deck{cards}
+	return 0, false
+}
+
+// Add a card to the deck,
+func (d Deck) Add(card card.CardType) error {
+	_, found := d.hasCard(card)
+	if found == true {
+		return newDeckError("Card already exists in the deck")
+	}
+	d.cards = append(d.cards, card)
+	return nil
+}
+
+// DeckOfCards interface
+type DeckOfCards interface {
+	Add(card card.CardType) error
+	Pick() card.CardType
+	PickIndex() int
+	Draw() card.CardType
+	DrawHand(count int) []card.CardType
+	FilterByRank() DeckOfCards
+	FilterBySuit() DeckOfCards
+	FilterByColor() DeckOfCards
+	Shuffle() DeckOfCards
 }

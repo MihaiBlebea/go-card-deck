@@ -45,6 +45,7 @@ type Card struct {
 	suit Suit
 }
 
+// GetSuit returns the suit and color of the card in literal, string form
 func (c Card) GetSuit() (string, string) {
 	var color string
 	var suit string
@@ -65,59 +66,40 @@ func (c Card) GetSuit() (string, string) {
 	return suit, color
 }
 
+// GetValue returns an integer value of the card
 func (c Card) GetValue() int {
 	return int(c.rank)
 }
 
-func (c *Card) SetValue(value int) {
+// SetValue sets an integer as the value of the card
+func (c Card) SetValue(value int) {
 	c.rank = Rank(value)
 }
 
-func (c Card) equalColor(card Card) bool {
-	suit1, _ := c.GetSuit()
-	suit2, _ := card.GetSuit()
-	if suit1 == suit2 {
-		return true
-	}
-	return false
+// GetRank returns an integer value of the card
+func (c Card) GetRank() int {
+	return int(c.rank)
 }
 
-func (c Card) EqualSuit(card Card) bool {
-	if c.suit == card.suit {
-		return true
-	}
-	return false
-}
-
-func (c Card) EqualRank(card Card) bool {
-	if c.rank == card.rank {
-		return true
-	}
-	return false
-}
-
-func (c Card) IsBiggerThen(card Card) bool {
-	if c.rank > card.rank {
-		return true
-	}
-	return false
-}
-
-func (c Card) IsSmallerThen(card Card) bool {
-	if c.rank < card.rank {
-		return true
-	}
-	return false
-}
-
-func (c Card) Show() (string, string, int) {
+// Show returns the suit, color and value of the card
+func (c Card) Show() map[string]interface{} {
 	suit, color := c.GetSuit()
-	return suit, color, c.GetValue()
+	result := make(map[string]interface{})
+	result["suit"] = suit
+	result["color"] = color
+	result["rank"] = c.GetValue()
+	return result
 }
 
-func New(suit Suit, rank Rank) Card {
-	return Card{
-		rank,
-		suit,
-	}
+type CardType interface {
+	GetSuit() (string, string)
+	GetValue() int
+	SetValue(value int)
+	GetRank() int
+	Show() map[string]interface{}
+	EqualColor(card CardType) bool
+	EqualSuit(card CardType) bool
+	EqualRank(card CardType) bool
+	IsBiggerThen(card CardType) bool
+	IsSmallerThen(card CardType) bool
 }
