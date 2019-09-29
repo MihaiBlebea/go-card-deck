@@ -40,3 +40,11 @@ func (d *Deck) DrawHand(count int) []card.CardType {
 	}
 	return hand
 }
+
+// DrawLastCard returns and removes the last card from the deck
+func (d *Deck) DrawLastCard() card.CardType {
+	lastCard := d.cards[len(d.cards) - 1]
+	d.remove(lastCard)
+
+	return lastCard
+}

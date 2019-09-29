@@ -2,8 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"go-card-deck/card"
+	// "go-card-deck/card"
 	"go-card-deck/deck"
 )
 
@@ -11,19 +10,18 @@ func main() {
 	pack := deck.New()
 	pack.Shuffle()
 
-	err := pack.Add(card.New(1, 4))
-	if err != nil {
-		log.Panic(err)
-	}
-	printHand("Mihai", pack.DrawHand(10) )
+	player1 := deck.NewFromCards(pack.DrawHand(5))
+	player2 := deck.NewFromCards(pack.DrawHand(5))
 
-}
+	table := deck.NewFromCards(pack.DrawHand(1))
 
-func printHand(name string, hand []card.CardType) {
+	fmt.Println(player1.ShowCards())
+	fmt.Println(player2.ShowCards())
 
-	fmt.Println("Show hand for " + name)
-	for _, value := range hand {
-		fmt.Println(value.Show())
-	}
-	fmt.Println("---------------")
-}
+	fmt.Println(table.ShowLastCard())
+
+
+	table.Add(player1.DrawLastCard())
+
+	fmt.Println(player1.ShowCards())
+}	

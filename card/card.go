@@ -91,6 +91,7 @@ func (c Card) Show() map[string]interface{} {
 	return result
 }
 
+// CardType is the interface for the Card model
 type CardType interface {
 	GetSuit() (string, string)
 	GetValue() int
