@@ -1,17 +1,22 @@
 package deck
 
-type CardJson map[string]interface{}
+import "deckofcards/card"
 
-// LastCard returns the last card in the deck
-func (d *Deck) ShowLastCard() CardJson {
-	return d.cards[len(d.cards) - 1].Show()
+// ShowLastCard returns the last card in the deck. Card will not be substracted from the deck
+func (d *Deck) ShowLastCard() *card.Card {
+	return &d.GetCards()[len(d.GetCards())-1]
 }
 
-// ShowCards returns an array of cards in json format
-func (d *Deck) ShowCards() []CardJson {
-	var allCards []CardJson
-	for _, card := range d.cards {
-		allCards = append(allCards, card.Show())
+// ShowFirstCard returns the first card in the deck. Card will not be substracted from the deck
+func (d *Deck) ShowFirstCard() *card.Card {
+	return &d.GetCards()[0]
+}
+
+// ShowCards returns a list of cards from the deck. Cards will not be substracted from the deck
+func (d *Deck) ShowCards() *[]card.Card {
+	var allCards []card.Card
+	for _, card := range d.GetCards() {
+		allCards = append(allCards, card)
 	}
-	return allCards
+	return &allCards
 }

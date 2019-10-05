@@ -41,66 +41,16 @@ func GetSuitTypes() [4]Suit {
 
 // Card model is the main actor of our package
 type Card struct {
-	rank Rank
-	suit Suit
+	Rank
+	Suit
 }
 
 // GetSuit returns the suit and color of the card in literal, string form
-func (c Card) GetSuit() (string, string) {
-	var color string
-	var suit string
-	switch c.suit {
-	case Heart:
-		color = "red"
-		suit = "heart"
-	case Diamond:
-		color = "black"
-		suit = "diamond"
-	case Club:
-		color = "black"
-		suit = "club"
-	case Spade:
-		color = "red"
-		suit = "spade"
-	}
-	return suit, color
-}
-
-// GetValue returns an integer value of the card
-func (c Card) GetValue() int {
-	return int(c.rank)
-}
-
-// SetValue sets an integer as the value of the card
-func (c Card) SetValue(value int) {
-	c.rank = Rank(value)
+func (c *Card) GetSuit() int {
+	return int(c.Suit)
 }
 
 // GetRank returns an integer value of the card
-func (c Card) GetRank() int {
-	return int(c.rank)
-}
-
-// Show returns the suit, color and value of the card
-func (c Card) Show() map[string]interface{} {
-	suit, color := c.GetSuit()
-	result := make(map[string]interface{})
-	result["suit"] = suit
-	result["color"] = color
-	result["rank"] = c.GetValue()
-	return result
-}
-
-// CardType is the interface for the Card model
-type CardType interface {
-	GetSuit() (string, string)
-	GetValue() int
-	SetValue(value int)
-	GetRank() int
-	Show() map[string]interface{}
-	EqualColor(card CardType) bool
-	EqualSuit(card CardType) bool
-	EqualRank(card CardType) bool
-	IsBiggerThen(card CardType) bool
-	IsSmallerThen(card CardType) bool
+func (c *Card) GetRank() int {
+	return int(c.Rank)
 }

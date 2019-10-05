@@ -1,3 +1,3 @@
-module go-card-deck
+module deckofcards
 
 go 1.13
