@@ -44,13 +44,3 @@ type Card struct {
 	Rank
 	Suit
 }
-
-// GetSuit returns the suit and color of the card in literal, string form
-func (c *Card) GetSuit() int {
-	return int(c.Suit)
-}
-
-// GetRank returns an integer value of the card
-func (c *Card) GetRank() int {
-	return int(c.Rank)
-}
